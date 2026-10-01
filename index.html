@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="SPADE: a simulated coin exchange with trading, staking, governance and burn mechanics. Demo funds only.">
+<link rel="manifest" href="manifest.webmanifest"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%2780%27 font-size=%2780%27%3E%E2%99%A0%3C/text%3E%3C/svg%3E">
+<title>♠ SPADE Coin Exchange</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06231a;--panel:#0b3326;--ink:#f3efe0;--mute:#9fbfb0;--line:#1f5a45;--gold:#f0c35a;--up:#5fe0b0;--down:#ff8294;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f5efdd;--panel:#fffdf6;--ink:#0d2b21;--mute:#4f6b5f;--line:#d9d0b4;--gold:#8a5d00;--up:#0c7a55;--down:#b3263c}}
+:root[data-theme="light"]{--bg:#f5efdd;--panel:#fffdf6;--ink:#0d2b21;--mute:#4f6b5f;--line:#d9d0b4;--gold:#8a5d00;--up:#0c7a55;--down:#b3263c}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Manrope,system-ui,sans-serif}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1,h2{font-family:Fraunces,Georgia,serif;margin:0}
+.sim{border:1px solid var(--gold);border-radius:8px;padding:10px 14px;font-size:14px;color:var(--mute)}
+.sim b{color:var(--gold)}
+header{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:baseline;padding:16px 0}
+header a{color:var(--gold);margin-right:12px}
+.price{font:600 clamp(40px,10vw,76px)/1 Fraunces,Georgia,serif;margin:18px 0 4px}
+.sub{color:var(--mute);font-size:14px}
+.grid{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+svg.chart{width:100%;height:190px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;padding:10px;border:1px solid var(--line);background:none;color:var(--ink);border-radius:8px;font:inherit;cursor:pointer}
+.tabs button.on{background:var(--gold);color:#1a1300;border-color:var(--gold);font-weight:600}
+input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+label{font-size:14px;color:var(--mute)}
+.go{width:100%;margin-top:12px;padding:13px;border:0;border-radius:8px;background:var(--gold);color:#1a1300;font:600 16px Manrope,sans-serif;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.row{display:flex;justify-content:space-between;font-size:14px;padding:3px 0}
+.row span:first-child{color:var(--mute)}
+.msg{min-height:22px;font-size:14px;margin-top:8px}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font-size:12px;line-height:1.4;margin:10px 0 0}
+.wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+td,th{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+h2{font-size:24px;margin:34px 0 10px}
+footer{margin:40px 0 16px;color:var(--mute);font-size:13px}
+nav a{color:var(--gold);text-decoration:none}.vt{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line)}.vt button{padding:6px 12px;border-radius:8px;border:1px solid var(--gold);background:none;color:var(--ink);cursor:pointer;font:inherit}body{background:radial-gradient(900px 500px at 50% -5%,color-mix(in srgb,var(--gold) 16%,transparent),transparent),var(--bg);font-variant-numeric:tabular-nums}
+main{position:relative;z-index:1}
+.card{background:color-mix(in srgb,var(--panel) 80%,transparent);backdrop-filter:blur(8px);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.price{background:linear-gradient(180deg,var(--gold),color-mix(in srgb,var(--gold) 55%,var(--ink)));-webkit-background-clip:text;background-clip:text;color:transparent}
+.go{background:linear-gradient(180deg,var(--gold),color-mix(in srgb,var(--gold) 75%,#000));border-radius:12px}
+select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+input[type=checkbox]{width:auto;margin-right:8px}
+.set{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}.set .tg{grid-column:1/-1;display:flex;gap:18px;flex-wrap:wrap;align-items:center}.set .tg label{color:var(--ink)}
+@media(max-width:700px){.set{grid-template-columns:1fr}}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chips button,.chip{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--ink);font:inherit;font-size:13px;cursor:pointer;text-align:left}
+.chips button.on{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 18%,transparent)}
+.chips small{display:block;color:var(--mute);font-size:11px}
+#rain{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.coin{position:absolute;bottom:-70px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:700;color:#5a3d00;background:radial-gradient(circle at 30% 30%,#fff3b8,#f0c35a 55%,#a8761a);box-shadow:inset 0 0 0 3px rgba(255,255,255,.35),0 2px 8px rgba(0,0,0,.3);opacity:0;animation:rise var(--d) linear var(--t) infinite;will-change:transform}
+@keyframes rise{0%{transform:translate3d(0,0,0) rotateY(0);opacity:0}10%{opacity:.5}90%{opacity:.5}100%{transform:translate3d(var(--x),-120vh,0) rotateY(720deg);opacity:0}}
+body.norain #rain{display:none}
+@media(prefers-reduced-motion:reduce){#rain{display:none}}
+</style></head><body><div id="rain" aria-hidden="true"></div><main>
+<header><div><h2 style="font-size:28px;margin:0"><span style="color:var(--gold)">♠</span> SPADE</h2></div>
+<span class="sub" id="net" role="status"></span></header>
+<nav style="display:flex;gap:16px;flex-wrap:wrap;padding-bottom:12px;font-size:14px"><a href="#trade">Trade</a><a href="#set">Preferences</a><a href="#pf">Portfolio</a><a href="#stake">Staking</a><a href="#gov">Governance</a><a href="#tokenomics">Tokenomics</a><a href="#risk">Risk</a></nav>
+<div class="sim"><b>Simulation.</b> This exchange runs in your browser with demo funds. No real money, wallet or blockchain is involved. The price comes from the liquidity pool below, and it starts at <b id="ref"></b> as a design reference, not a guaranteed value.</div>
+
+<section class="card set" id="set" aria-label="Preferences"><div><label for="cur">Region and currency</label><select id="cur"></select><div class="sub" id="det"></div></div>
+<div><label>Payment method (simulated)</label><div class="chips" id="pay"></div></div>
+<div class="tg"><label><input type="checkbox" id="tw">Confirm each trade</label><label><input type="checkbox" id="rn">Coin rain</label><button class="chip" id="th">Switch theme</button></div></section>
+<div id="trade"></div><div class="price" id="px">$150,000.00</div>
+<div class="sub"><span id="chg">0.00%</span> since open · 1,000,000 SPADE hard cap · <span id="burn">0</span> SPADE burned</div>
+
+<div class="grid">
+<div class="card"><svg class="chart" id="ch" viewBox="0 0 400 190" preserveAspectRatio="none"></svg>
+<div class="row"><span>Pool reserves</span><span id="res"></span></div>
+<div class="row"><span>Circulating supply</span><span id="circ"></span></div></div>
+
+<div class="card">
+<div class="tabs"><button id="tb" class="on">Buy</button><button id="ts">Sell</button></div>
+<label id="lab" for="amt">Amount in USDC</label>
+<input id="amt" type="number" min="0" step="any" value="15000" inputmode="decimal">
+<div class="chips" id="qk"></div><div class="row" style="margin-top:10px"><span>You receive</span><span id="out">-</span></div>
+<div class="row"><span>Price impact</span><span id="imp">-</span></div>
+<div class="row"><span>Protocol fee 0.3% (20% burned)</span><span id="fee">-</span></div>
+<div class="row"><span>Payment fee (<span id="pml"></span>)</span><span id="pmf">-</span></div><button class="go" id="go">Buy SPADE</button>
+<div class="msg" id="msg" role="status"></div>
+<div class="row"><span>Demo cash</span><span id="wu"></span></div>
+<div class="row"><span>Demo SPADE</span><span id="wa"></span></div>
+<button class="go" id="rs" style="background:none;border:1px solid var(--line);color:var(--ink);margin-top:8px;padding:8px">Reset demo</button>
+</div></div>
+
+<h2 id="pf">Portfolio</h2>
+<div class="card"><div class="row"><span>Holdings (wallet + staked)</span><span id="pfh">-</span></div><div class="row"><span>Value at current price</span><span id="pfv">-</span></div><div class="row"><span>Cost basis</span><span id="pfc">-</span></div><div class="row"><span>Profit / loss</span><span id="pfp">-</span></div></div>
+<h2 id="gov">Governance</h2>
+<div class="card" id="gvx"></div>
+<h2 id="stake">Staking</h2>
+<div class="card"><label for="stk">Amount of SPADE</label><input id="stk" type="number" min="0" step="any" value="0.05">
+<div class="row" style="margin-top:10px"><span>Staked</span><span id="sst">0</span></div>
+<div class="row"><span>Pending reward (8% APY, paid from the staking reserve)</span><span id="spd">0</span></div>
+<div style="display:flex;gap:8px"><button class="go" id="sb">Stake</button><button class="go" id="su">Unstake</button><button class="go" id="sc">Claim</button></div></div>
+<h2>Recent trades <button class="vt" style="border:1px solid var(--line);font-size:13px;padding:4px 10px;border-radius:8px;background:none;color:var(--ink);cursor:pointer" id="csv">Export CSV</button></h2>
+<div class="card wrap"><table><tr><th>Side</th><th>Amount</th><th>Result</th><th>Price after</th></tr><tbody id="hx"><tr><td colspan="4" class="sub">No trades yet. Buy or sell to see them here.</td></tr></tbody></table></div>
+<h2>Ask in plain language</h2>
+<div class="card">
+<label for="nl">Try: buy 20000 · sell 0.5 SPADE · transfer 0.002 SPADE to vault · query rag market indicators</label>
+<input id="nl" maxlength="120" value="buy 20000">
+<button class="go" id="parse">Build payload</button>
+<pre id="pl">Payloads are unsigned. Nothing runs until you confirm.</pre>
+<button class="go" id="conf" style="display:none">Confirm and simulate</button>
+</div>
+
+<h2 id="tokenomics">Tokenomics</h2>
+<div class="card wrap"><table>
+<tr><th>Bucket</th><th>Share</th><th>Tokens</th><th>Schedule</th></tr>
+<tr><td>Ecosystem liquidity</td><td>30%</td><td>300,000</td><td>Pool seed, LP tokens time-locked 24 months</td></tr>
+<tr><td>Treasury</td><td>25%</td><td>250,000</td><td>Linear over 48 months, 6-month cliff</td></tr>
+<tr><td>Strategic reserves</td><td>25%</td><td>250,000</td><td>Linear over 60 months, 12-month cliff</td></tr>
+<tr><td>Core contributors</td><td>20%</td><td>200,000</td><td>Linear over 48 months, 12-month cliff</td></tr>
+</table>
+<p class="sub">24 decimals (10<sup>24</sup> base units). No mint function. 20% of RAG query tolls and agent execution fees burn permanently.</p></div>
+
+<h2>Architecture</h2>
+<div class="card"><pre>User ─▶ Chat UI ─▶ Groq / Gemini (intent parse only, no keys in browser)
+                      │ strict JSON schema + allowlist
+                      ▼
+            Intent validator (caps, nonce, deadline)
+                      │
+        ┌─────────────┴──────────────┐
+        ▼                            ▼
+  MCP tool server              Decentralized RAG nodes
+  (wallet, pool, DB)           (stake/burn SPADE per query,
+        │                       signed context proofs)
+        └─────────────┬──────────────┘
+                      ▼
+   ERC-4337 account + session key ─▶ AgentEscrow ─▶ SPADE (ERC-20)
+                      │                    └─ 20% toll burn
+                      ▼
+            ZK policy proof (decision stayed in bounds)</pre></div>
+
+<h2 id="risk">Risk matrix</h2>
+<div class="card wrap"><table>
+<tr><th>Threat</th><th>Defense</th></tr>
+<tr><td>Agent run-away loop</td><td>Session cap, 30-day max expiry, per-block rate limit, owner revoke, global pause</td></tr>
+<tr><td>Malicious RAG data</td><td>Signed source proofs, multi-node quorum, quarantine before any financial action</td></tr>
+<tr><td>Oracle manipulation</td><td>TWAP over 30 minutes, multi-source medians, deviation circuit breaker</td></tr>
+<tr><td>Prompt injection</td><td>Character allowlist, schema-only output, LLM never signs or holds keys</td></tr>
+<tr><td>Thin-liquidity price games</td><td>At 1M supply, one trade can move price hard; use deep pools, slippage limits, and honest disclosure</td></tr>
+</table></div>
+
+<footer>SPADE is a simulation for learning and demonstration. Demo funds only. Not financial advice.</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id),fmt=(n,d=2)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const FEE=.003,BURN=.2,S0=()=>({u:2e6,a:0,rx:100,ry:15e6,burned:0,st:0,t0:Date.now(),h:[150000],tx:[],cost:0,votes:{},gv:[[0,0],[0,0],[0,0]]});
+const CC={INR:['en-IN',88,'India'],USD:['en-US',1,'United States'],EUR:['en-IE',.92,'Europe'],GBP:['en-GB',.78,'United Kingdom'],AED:['en-AE',3.67,'UAE']};
+const PAYS={INR:[['upi','UPI',0,1200,'instant'],['card','Debit or credit card',.018,25000,'instant'],['nb','Net banking',.004,12000,'minutes'],['wal','Wallet',.01,600,'instant']],
+USD:[['ach','Bank transfer (ACH)',0,50000,'1-3 days'],['card','Debit or credit card',.029,25000,'instant'],['pay','Apple or Google Pay',.029,10000,'instant'],['wire','Wire transfer',.001,500000,'same day']],
+EUR:[['sepa','SEPA transfer',0,50000,'1 day'],['card','Card',.029,25000,'instant'],['pay','Apple or Google Pay',.029,10000,'instant']],
+GBP:[['fp','Faster Payments',0,40000,'minutes'],['card','Card',.029,25000,'instant'],['pay','Apple or Google Pay',.029,10000,'instant']],
+AED:[['bt','Bank transfer',0,40000,'1 day'],['card','Card',.029,25000,'instant']]};
+function detect(){try{const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'',reg=((navigator.language||'').split('-')[1]||'').toUpperCase();
+ if(/Kolkata|Calcutta/.test(tz)||reg==='IN')return'INR';if(reg==='GB')return'GBP';if(reg==='AE'||tz==='Asia/Dubai')return'AED';
+ if(['DE','FR','ES','IT','NL','IE','PT','AT','BE','FI','GR'].includes(reg))return'EUR'}catch(e){}return'USD'}
+let PREF={cur:null,pay:null,tw:false,rain:true,theme:null};
+try{Object.assign(PREF,JSON.parse(localStorage.getItem('spade.pref')||'{}'))}catch(e){}
+let CUR=CC[PREF.cur]?PREF.cur:detect(),RATE=CC[CUR][1],armed=false;
+const NF={};function M(usd,d=2){const k=CUR+d;NF[k]=NF[k]||new Intl.NumberFormat(CC[CUR][0],{style:'currency',currency:CUR,minimumFractionDigits:d,maximumFractionDigits:d});return NF[k].format(usd*RATE)}
+const PM=()=>{const l=PAYS[CUR],x=l.find(p=>p[0]===PREF.pay)||l[0];return{id:x[0],label:x[1],fee:x[2],lim:x[3],eta:x[4]}};
+const inUSD=()=>{const v=parseFloat($('amt').value);return side==='buy'?v/RATE:v};
+function savePref(){try{localStorage.setItem('spade.pref',JSON.stringify(PREF))}catch(e){}}
+function save(){try{localStorage.setItem('spade.v2',JSON.stringify(S))}catch(e){}}
+function load(){try{const s=JSON.parse(localStorage.getItem('spade.v2'));return s&&s.gv&&s.cost!==undefined?s:null}catch(e){return null}}
+function pmu(){const p=PM(),v=inUSD();$('pml').textContent=p.label;$('pmf').textContent=side==='buy'&&v>0?M(v*p.fee):'None'}
+function qk(){const b=side==='buy',L=b?[.1,.25,.5]:[.25,.5,1];$('qk').innerHTML=L.map(x=>'<button data-p="'+x+'">'+(x*100)+'%</button>').join('')}
+function rain(){const el=$('rain');el.innerHTML='';const n=((navigator.hardwareConcurrency||4)<4||innerWidth<600)?10:18;
+ for(let i=0;i<n;i++){const c=document.createElement('i'),s=22+Math.random()*30;c.className='coin';c.textContent='♠';
+ c.style.cssText='left:'+Math.random()*100+'%;width:'+s+'px;height:'+s+'px;font-size:'+s*.55+'px;--d:'+(9+Math.random()*9)+'s;--t:-'+Math.random()*14+'s;--x:'+(Math.random()-.5)*80+'px';el.appendChild(c)}}
+function pay(){$('pay').innerHTML=PAYS[CUR].map(p=>'<button data-id="'+p[0]+'" class="'+(PM().id===p[0]?'on':'')+'">'+p[1]+'<small>'+(p[2]?(p[2]*100).toFixed(1)+'% fee':'No fee')+' · '+p[4]+'</small></button>').join('')}
+function initUI(){
+ $('cur').innerHTML=Object.keys(CC).map(k=>'<option value="'+k+'">'+CC[k][2]+' ('+k+')</option>').join('');$('cur').value=CUR;
+ $('det').textContent='Prices are shown in '+CUR+'. Demo exchange rates.';
+ $('tw').checked=PREF.tw;$('rn').checked=PREF.rain;document.body.classList.toggle('norain',!PREF.rain);
+ if(PREF.theme)document.documentElement.dataset.theme=PREF.theme;
+ $('ref').textContent=M(150000,0);pay();rain();setSide('buy');
+ const net=()=>{$('net').textContent=navigator.onLine?'Online':'Offline mode: your demo still works'};net();addEventListener('online',net);addEventListener('offline',net);
+ addEventListener('error',()=>{$('msg').textContent='Something went wrong. Your demo data is safe. Refresh to continue.'});
+ $('cur').onchange=e=>{CUR=e.target.value;RATE=CC[CUR][1];PREF.cur=CUR;PREF.pay=null;savePref();$('det').textContent='Prices are shown in '+CUR+'. Demo exchange rates.';$('ref').textContent=M(150000,0);pay();setSide(side);draw()};
+ $('pay').onclick=e=>{const b=e.target.closest('button');if(!b)return;PREF.pay=b.dataset.id;savePref();pay();est()};
+ $('tw').onchange=e=>{PREF.tw=e.target.checked;savePref()};
+ $('rn').onchange=e=>{PREF.rain=e.target.checked;document.body.classList.toggle('norain',!PREF.rain);savePref()};
+ $('th').onclick=()=>{const d=document.documentElement.dataset;d.theme=(d.theme==='light'||(!d.theme&&matchMedia('(prefers-color-scheme: light)').matches))?'dark':'light';PREF.theme=d.theme;savePref()};
+ $('qk').onclick=e=>{const b=e.target.closest('button');if(!b)return;const x=+b.dataset.p;$('amt').value=side==='buy'?Math.round(S.u*x*RATE):+(S.a*x).toFixed(6);est()};
+ try{if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js')}catch(e){}
+}
+let S=load()||S0(),side='buy',pend=null;
+const px=()=>S.ry/S.rx;
+function quote(v){
+  if(!(v>0))return null;
+  if(side==='buy'){const g=S.rx*v/(S.ry+v),f=g*FEE;return{out:g-f,fee:f,imp:(((S.ry+v)/(S.rx-g))/px()-1)*100,g}}
+  const f=v*FEE,n=v-f,o=S.ry*n/(S.rx+n);return{out:o,fee:f,imp:(1-((S.ry-o)/(S.rx+n))/px())*100,n}}
+function draw(){save();
+  const p=px();$('px').textContent=M(p);
+  const c=(p/150000-1)*100;$('chg').textContent=(c>=0?'+':'')+c.toFixed(2)+'%';$('chg').style.color=c>=0?'var(--up)':'var(--down)';
+  $('burn').textContent=fmt(S.burned,6);$('res').textContent=fmt(S.rx,3)+' SPADE / '+M(S.ry,0);
+  $('circ').textContent=fmt(1e6-S.burned,3)+' SPADE';$('wu').textContent=M(S.u);$('wa').textContent=fmt(S.a,6);
+  const h=S.h,mn=Math.min(...h)*.995,mx=Math.max(...h)*1.005||1,r=mx-mn||1;
+  const pts=h.map((v,i)=>[(h.length<2?200:i/(h.length-1)*400),185-(v-mn)/r*170]);
+  const d=h.length<2?'M0 100 L400 100':'M'+pts.map(q=>q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' L');
+  $('ch').innerHTML='<path d="'+d+'" fill="none" stroke="var(--gold)" stroke-width="2" vector-effect="non-scaling-stroke"/>';
+  est()}
+function est(){const q=quote(inUSD());
+  if(!q){$('out').textContent=$('imp').textContent=$('fee').textContent='-';return}
+  $('out').textContent=side==='buy'?fmt(q.out,6)+' SPADE':M(q.out);
+  $('imp').textContent=q.imp.toFixed(3)+'%';$('fee').textContent=fmt(q.fee,6)+' SPADE';pmu()}
+function exec(sd,v){
+  const m=$('msg');side=sd;const q=quote(v);
+  if(!q){m.textContent='Enter an amount above zero.';return false}
+  if(sd==='buy'){const pm=PM(),c=v*(1+pm.fee);if(v>pm.lim){m.textContent='Over the '+pm.label+' limit of '+M(pm.lim,0)+' per trade.';return false}if(c>S.u){m.textContent='Not enough demo cash.';return false}
+    S.u-=c;S.a+=q.out;S.cost+=c;S.rx-=q.g;S.ry+=v;S.burned+=q.fee*BURN;m.textContent='Bought '+fmt(q.out,6)+' SPADE.'}
+  else{if(v>S.a){m.textContent='Not enough demo SPADE.';return false}
+    S.cost*=1-v/S.a;S.a-=v;S.u+=q.out;S.rx+=q.n;S.ry-=q.out;S.burned+=q.fee*BURN;m.textContent='Sold '+fmt(v,6)+' SPADE for '+M(q.out)+'.'}
+  S.h.push(px());if(S.h.length>200)S.h.shift();log(sd,v,q);draw();return true}
+function setSide(s){side=s;armed=false;$('tb').classList.toggle('on',s==='buy');$('ts').classList.toggle('on',s==='sell');
+  $('lab').textContent=s==='buy'?'Amount in '+CUR:'Amount in SPADE';$('go').textContent=s==='buy'?'Buy SPADE':'Sell SPADE';
+  $('amt').value=s==='buy'?Math.round(15000*RATE):0.1;est();qk()}
+$('tb').onclick=()=>setSide('buy');$('ts').onclick=()=>setSide('sell');
+$('amt').oninput=est;$('go').onclick=()=>{try{if(PREF.tw&&!armed){armed=true;$('go').textContent='Confirm '+(side==='buy'?'purchase':'sale');setTimeout(()=>{if(armed){armed=false;setSide(side)}},6000);return}armed=false;exec(side,inUSD());setSide(side)}catch(e){$('msg').textContent='That trade could not be completed. Nothing was changed.'}};
+$('rs').onclick=()=>{S=S0();$('msg').textContent='Demo reset.';setSide('buy');draw()};
+/* intent parser: allowlist + schema-only output, mirrors what the LLM layer must return */
+const BAD=/ignore|system|prompt|private|seed|key|password|override|admin/i,MAXUSD=5e5;
+function parseIntent(t){
+  t=t.trim();
+  if(!/^[a-z0-9 .$,₹€£]{1,120}$/i.test(t))return{err:'Only letters, numbers, spaces and . $ , are allowed.'};
+  if(BAD.test(t))return{err:'Blocked: the text contains a restricted word.'};
+  let m,base={nonce:crypto.getRandomValues(new Uint32Array(1))[0],deadline:Math.floor(Date.now()/1e3)+300,chainId:11155111,status:'unsigned'};
+  if(m=t.match(/^buy\s+[$₹€£]?([\d.,]+)\s*(usd|usdc|inr|eur|gbp|aed)?$/i)){const v=+m[1].replace(/,/g,'')/RATE;if(!(v>0)||v>MAXUSD)return{err:'Amount must be between 0 and '+M(MAXUSD,0)+'.'};return{...base,action:'swap_buy',amountUSDC:v}}
+  if(m=t.match(/^sell\s+([\d.]+)\s*(spade)?$/i)){const v=+m[1];if(!(v>0))return{err:'Amount must be above zero.'};return{...base,action:'swap_sell',amountSPADE:v}}
+  if(m=t.match(/^(?:transfer|send)\s+([\d.]+)\s*spade\s+to\s+([a-z0-9]{2,30})$/i))return{...base,action:'transfer',amountSPADE:+m[1],to:m[2],note:'recipient must resolve to an allowlisted address'};
+  if(m=t.match(/^query\s+rag\s+([a-z0-9 ]{2,60})$/i))return{...base,action:'rag_query',topic:m[1],tollSPADE:0.0001,burnShare:'20%'};
+  return{err:'Not understood. Use buy, sell, transfer or query rag.'}}
+$('parse').onclick=()=>{const r=parseIntent($('nl').value);pend=null;$('conf').style.display='none';
+  if(r.err){$('pl').textContent=r.err;return}
+  $('pl').textContent=JSON.stringify(r,null,2);pend=r;
+  $('conf').style.display=(r.action==='swap_buy'||r.action==='swap_sell')?'block':'none'};
+$('conf').onclick=()=>{if(!pend)return;const ok=pend.action==='swap_buy'?exec('buy',pend.amountUSDC):exec('sell',pend.amountSPADE);
+  $('pl').textContent=ok?'Done. '+$('msg').textContent:$('msg').textContent;pend=null;$('conf').style.display='none';setSide(side)};
+function log(sd,v,q){S.tx.unshift([sd==='buy'?'Buy':'Sell',sd==='buy'?M(v):fmt(v,6)+' SPADE',sd==='buy'?fmt(q.out,6)+' SPADE':M(q.out),M(px())]);S.tx=S.tx.slice(0,50);
+  $('hx').innerHTML=S.tx.slice(0,8).map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')}
+const pend2=()=>S.st*.08*(Date.now()-S.t0)/31536e6;
+const PR=[['SP-1','Raise the burn share of fees from 20% to 30%',[0,0]],['SP-2','Fund a bug bounty from the staking reserve',[0,0]],['SP-3','Add a 7-day cooldown before unstaking',[0,0]]];
+function gd(){$('gvx').innerHTML=PR.map((p,i)=>{const v=S.votes[i],y=p[2][0],n=p[2][1],t=y+n||1;
+ return '<div class="vt"><div>'+p[0]+': '+p[1]+'<div class="sub">Yes '+fmt(y,4)+' · No '+fmt(n,4)+' ('+fmt(y/t*100,0)+'% yes)</div></div><div>'+(v?'<span class="sub">You voted '+v+'</span>':'<button data-i="'+i+'" data-v="yes">Yes</button> <button data-i="'+i+'" data-v="no">No</button>')+'</div></div>'}).join('')}
+$('gvx').onclick=e=>{const b=e.target.closest('button');if(!b)return;const w=S.a+S.st;
+ if(!(w>0)){$('msg').textContent='Hold SPADE to vote. Your weight equals your balance.';return}
+ const i=+b.dataset.i;S.votes[i]=b.dataset.v;PR[i][2][b.dataset.v==='yes'?0:1]+=w;gd()};
+$('csv').onclick=()=>{const t='side,amount,result,price_after\n'+S.tx.map(r=>r.map(c=>'"'+c+'"').join(',')).join('\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/csv'}));a.download='spade-trades.csv';a.click()};
+function pf(){const q=S.a+S.st,v=q*px();$('pfh').textContent=fmt(q,6)+' SPADE';$('pfv').textContent=M(v);$('pfc').textContent=M(S.cost);
+ const p=v-S.cost;$('pfp').textContent=(p>=0?'+':'-')+M(Math.abs(p));$('pfp').style.color=p>=0?'var(--up)':'var(--down)'}
+function sdraw(){pf();$('sst').textContent=fmt(S.st,6);$('spd').textContent=fmt(pend2(),10)}
+function settle(){S.a+=pend2();S.t0=Date.now()}
+$('sb').onclick=()=>{const v=parseFloat($('stk').value);if(v>0&&v<=S.a){settle();S.a-=v;S.st+=v;$('msg').textContent='Staked '+fmt(v,6)+' SPADE.'}else $('msg').textContent='Not enough demo SPADE to stake.';draw();sdraw()};
+$('su').onclick=()=>{const v=parseFloat($('stk').value);if(v>0&&v<=S.st){settle();S.st-=v;S.a+=v;$('msg').textContent='Unstaked '+fmt(v,6)+' SPADE.'}else $('msg').textContent='Not enough staked SPADE.';draw();sdraw()};
+$('sc').onclick=()=>{settle();$('msg').textContent='Reward claimed.';draw();sdraw()};
+PR.forEach((p,i)=>p[2]=S.gv[i]);setInterval(()=>{if(!document.hidden)sdraw()},1000);gd();sdraw();
+$('rs').addEventListener('click',()=>{PR.forEach((p,i)=>p[2]=S.gv[i]);gd();$('hx').innerHTML='<tr><td colspan="4" class="sub">No trades yet.</td></tr>';sdraw()});
+initUI();draw();sdraw();
+</script></body></html>
